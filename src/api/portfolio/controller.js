@@ -13,6 +13,7 @@ module.exports = {
   read: async(params) => {
     try {
       var portfolio = await Portfolio.findById(params.key)
+      portfolio.plot = portfolio.plot.slice(-58)
       return portfolio
     } catch (error) {
       throw new Error(error)
@@ -67,8 +68,8 @@ module.exports = {
   },
   value24: async(params) => {
     try {
-      var holdings = []
       var tokens = []
+      var totalCostUsd = 0
       var totalValue = 0
       var totalValue24 = 0
       var portfolio = await Portfolio.findById(params.key)
@@ -82,35 +83,29 @@ module.exports = {
         if (prices[token.symbol]) {
           totalValue24 += (token.amount * prices[token.symbol]['USD'].OPEN24HOUR)
           totalValue += (token.amount * prices[token.symbol]['USD'].PRICE)
-          holdings.push({
-            'symbol': token.symbol,
-            'price': prices[token.symbol]['USD'].PRICE,
-            'amount': token.amount,
-            'change24': prices[token.symbol]['USD'].CHANGE24HOUR,
-            'change24Pct': prices[token.symbol]['USD'].CHANGEPCT24HOUR,
-            'value': (token.amount * prices[token.symbol]['USD'].PRICE)
-          })
-        } else {
-          holdings.push({
-            'symbol': token.symbol,
-            'price': 0,
-            'amount': token.amount,
-            'change24': 0,
-            'change24Pct': 0,
-            'value': 0
-          })
+          totalCostUsd += (token.amount * token.cost_usd)
+          token.price = prices[token.symbol]['USD'].PRICE
+          token.change24 = prices[token.symbol]['USD'].CHANGE24HOUR
+          token.change24Pct = prices[token.symbol]['USD'].CHANGEPCT24HOUR
+          token.total_cost_usd = (token.amount * token.cost_usd)
+          token.value = (token.amount * prices[token.symbol]['USD'].PRICE)
+          token.profit_usd = (token.amount * prices[token.symbol]['USD'].PRICE) - (token.amount * token.cost_usd)
         }
       }
-      portfolio.holdings = holdings
-      return {
-        portfolio: portfolio,
-        coins: holdings,
-        total: {
-          current: totalValue,
-          yesterday: totalValue24,
-          change: (totalValue - totalValue24)
-        }
+      console.log('totalCostUsd: ', totalCostUsd)
+      portfolio.total = {
+        cost_usd: totalCostUsd,
+        current: totalValue,
+        yesterday: totalValue24,
+        change: (totalValue - totalValue24)
       }
+      if (totalValue > 0) {
+        portfolio.plot.push(totalValue)
+      }
+
+      var saved = await portfolio.save()
+      saved.plot = saved.plot.slice(-58)
+      return saved
     } catch (error) {
       throw new Error(error)
     }
