@@ -70,6 +70,7 @@ module.exports = {
     try {
       var tokens = []
       var totalCostUsd = 0
+      var totalProfitUsd = 0
       var totalValue = 0
       var totalValue24 = 0
       var portfolio = await Portfolio.findById(params.key)
@@ -90,10 +91,12 @@ module.exports = {
           token.total_cost_usd = (token.amount * token.cost_usd)
           token.value = (token.amount * prices[token.symbol]['USD'].PRICE)
           token.profit_usd = (token.amount * prices[token.symbol]['USD'].PRICE) - (token.amount * token.cost_usd)
+          totalProfitUsd += (token.amount * prices[token.symbol]['USD'].PRICE) - (token.amount * token.cost_usd)
         }
       }
       console.log('totalCostUsd: ', totalCostUsd)
       portfolio.total = {
+        profit_usd: totalProfitUsd,
         cost_usd: totalCostUsd,
         current: totalValue,
         yesterday: totalValue24,
