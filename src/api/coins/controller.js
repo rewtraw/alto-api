@@ -1,4 +1,5 @@
 const cc = require('cryptocompare')
+const request = require('request-promise')
 import fetch from 'isomorphic-fetch'
 const MARKET = 'USD'
 var Coin = require('./model')
@@ -93,6 +94,26 @@ module.exports = {
         return 0.00
       })
       return prices
+    } catch (error) {
+      throw new Error(error)
+    }
+  },
+  marketCap: async() => {
+    try {
+      var options = {
+        timeout: 10000,
+        noDelay: true,
+        keepAliveDelay: 1000,
+        url: 'https://api.coinmarketcap.com/v1/global/',
+        headers: {
+          'cache-control': 'no-cache',
+          'Accept': 'application/json'
+        }
+      }
+      var response = await request(options)
+      var data = JSON.parse(response)
+
+      return data
     } catch (error) {
       throw new Error(error)
     }

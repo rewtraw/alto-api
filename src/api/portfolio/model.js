@@ -50,7 +50,28 @@ const coinsSchema = new Schema({
 const portfolioSchema = new Schema({
   name: String,
   coins: [coinsSchema],
-  total: {},
+  total: {
+    profit_usd: {
+      type: Number,
+      default: 0
+    },
+    cost_usd: {
+      type: Number,
+      default: 0
+    },
+    current: {
+      type: Number,
+      default: 0
+    },
+    yesterday: {
+      type: Number,
+      default: 0
+    },
+    change: {
+      type: Number,
+      default: 0
+    }
+  },
   plot: []
 }, {
   timestamps: true

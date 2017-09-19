@@ -39,7 +39,7 @@ const config = {
   },
   test: {
     mongo: {
-      uri: 'mongodb://localhost/alto-api-test',
+      uri: 'mongodb://alto.rewt.co/alto-api-test',
       options: {
         debug: false
       }
@@ -47,7 +47,7 @@ const config = {
   },
   development: {
     mongo: {
-      uri: 'mongodb://localhost/alto-api-dev',
+      uri: 'mongodb://alto.rewt.co/alto-api-dev',
       options: {
         debug: true
       }

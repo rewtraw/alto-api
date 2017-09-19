@@ -4,21 +4,27 @@ import cors from 'cors'
 import compression from 'compression'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
-import { errorHandler as queryErrorHandler } from 'querymen'
-import { errorHandler as bodyErrorHandler } from 'bodymen'
-import { env } from '../../config'
+import {
+  errorHandler as queryErrorHandler
+} from 'querymen'
+import {
+  errorHandler as bodyErrorHandler
+} from 'bodymen'
+import {
+  env
+} from '../../config'
 
 export default (routes) => {
   const app = express()
 
   /* istanbul ignore next */
-  if (env === 'production') {
-    app.set('forceSSLOptions', {
-      enable301Redirects: false,
-      trustXFPHeader: true
-    })
-    app.use(forceSSL)
-  }
+  // if (env === 'production') {
+  //   app.set('forceSSLOptions', {
+  //     enable301Redirects: false,
+  //     trustXFPHeader: true
+  //   })
+  //   app.use(forceSSL)
+  // }
 
   /* istanbul ignore next */
   if (env === 'production' || env === 'development') {
@@ -27,7 +33,9 @@ export default (routes) => {
     app.use(morgan('dev'))
   }
 
-  app.use(bodyParser.urlencoded({ extended: false }))
+  app.use(bodyParser.urlencoded({
+    extended: false
+  }))
   app.use(bodyParser.json())
   app.use(routes)
   app.use(queryErrorHandler())
